@@ -1,0 +1,63 @@
+# Panda Workbench MuJoCo Simulation
+
+GitHub repository: https://github.com/tlmsi/Panda-Workbench-MuJoCo-Simulation
+
+This project implements a MuJoCo simulation scene for a tabletop data-collection style workbench. The scene contains a fixed Franka Panda robot placed in front of a workbench with a graspable box and surrounding objects. I chose this setup because it represents a realistic manipulation station: the robot can approach, grasp, and lift an object from a table.
+
+The main design decision was to use a Franka Panda robot and build the rest of the scene around a simple tabletop manipulation task. The robot base is fixed in front of the workbench at a reasonable distance for Panda reach. The target box has physical collision geometry and can be grasped. The interactive script allows manual joint control through the MuJoCo passive viewer, gripper opening and closing, reset behavior, and an automatic box-pick sequence. The pick sequence uses the actual fingertip pad positions and the physical center of the box instead of a hard-coded joint pose.
+
+## Files
+
+* Teleop_IK.py: interactive MuJoCo viewer, keyboard teleoperation, and automatic box-pick demo.
+* panda_workbench_env.py: minimal Gymnasium-style environment implementing reset() and step(action).
+* scene/workbench_scene.xml: main MuJoCo scene.
+* licenses/: license and source notes for external assets.
+
+## Setup
+
+Tested on Ubuntu with Python 3.
+
+1. Create and activate a virtual environment:
+
+   python3 -m venv venv
+   source venv/bin/activate
+
+2. Install dependencies:
+
+   pip install -r requirements.txt
+
+## Run the interactive demo
+
+```
+python3 Teleop_IK.py
+```
+
+Controls:
+
+* Numpad 4/6: base left/right
+* Numpad 8/2: shoulder up/down
+* Numpad 7/1: elbow up/down
+* Numpad 9/3: wrist up/down
+* Numpad +/-: wrist rotation
+* Numpad 0: close gripper
+* Numpad .: open gripper
+* Numpad 5: automatic box pick
+* Backspace: reset to MuJoCo default pose
+
+## Run the minimal environment
+
+```
+python3 panda_workbench_env.py
+```
+
+The environment exposes a Gymnasium-style API with reset() and step(action). The action is a 9-dimensional actuator command for the 7 arm joints and 2 gripper actuators. The observation includes robot joint states, box center, fingertip center, and fingertip-to-box distance.
+
+## Asset sources and licensing
+
+The Franka Panda robot model is based on the MuJoCo Menagerie Franka Emika Panda model. License information is included in the licenses folder.
+
+The workbench, target box, and simple tabletop props are simple MJCF/procedural assets created or assembled for this assignment unless otherwise noted.
+
+## Future improvements
+
+With more time investment, I would add cameras for data collection, randomized object poses, better contact tuning for grasp robustness, and a richer Gymnasium reward function for full pick-and-place learning.
